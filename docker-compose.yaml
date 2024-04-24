@@ -1,53 +1,74 @@
-version: "3.7"
+version: '3.8'
+
 services:
   db:
-    image: postgres:16
-    container_name: db_app
-    command: -p 1221
-    expose:
-      - 1221
-    env_file:
-      - .env
+    volumes:
+      - "~/Documents:/app/Documents/"
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   redis:
-    image: redis:7
-    container_name: redis_app
-    command: --port 5370
-    expose:
-      - 5370
+    image: redis:6
 
-  app:
-    build:
-      context: .
-    env_file:
-      - .env
-    container_name: 9fastapi
-    command: ["/app/docker/app.sh"]
-    ports:
-      - 9999:8000
+  celery:
+    build: .
+    volumes:
+      - "~/Documents:/app/Documents/"
+    command: celery -A services.celery worker --loglevel=info
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - db
       - redis
 
-  celery:
-    build:
-      context: .
-    env_file:
-      - .env
-    container_name: celery_app
-    command: ["/app/docker/celery.sh", "celery"]
-    depends_on:
-      - redis
-
   flower:
-    build:
-      context: .
-    env_file:
-      - .env
-    container_name: flower_app
-    command: ["/app/docker/celery.sh", "flower"]
+    build: .
+    volumes:
+      - "~/Documents:/app/Documents/"
+    command: celery -A services.celery flower
+    ports:
+      - "5555:5555"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
+      - db
       - redis
       - celery
+
+  app:
+    build: .
+    volumes:
+      - "~/Documents:/app/Documents/"
     ports:
-      - 8888:5555
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+      - redis
+      - celery
+      - flower
+
+# volumes:
+#   myvolume:

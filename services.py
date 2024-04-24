@@ -2,8 +2,8 @@
 from models import Document, Documents_text
 from sqlalchemy.orm import Session
 from fastapi import UploadFile
-from os.path import expanduser
-from os import remove
+from os.path import expanduser, abspath
+from os import remove, getcwd, listdir
 from celery import Celery
 from PIL import Image
 from pytesseract import pytesseract
@@ -17,8 +17,8 @@ celery = Celery(
 
 
 def upload_doc(file: UploadFile, db: Session):
-    temp_path = expanduser("~/Documents/")
-    temp_path += f"{file.filename}"
+    # temp_path = expanduser("./")
+    temp_path = f"/app/Documents/{file.filename}"
     document = Document(path=temp_path)
 
     try:
@@ -61,10 +61,11 @@ def analyse_doc(id: int, db: Session):
 
     try:
         text_result = image_to_text.delay(image_path).get()
-        document_text = Documents_text(id_doc=id, text=text_result)
-        db.add(document_text)
-        db.commit()
-        db.refresh(document_text)
+        if text_result != 1:
+            document_text = Documents_text(id_doc=id, text=text_result)
+            db.add(document_text)
+            db.commit()
+            db.refresh(document_text)
     except Exception as exception:
         print("Analyse doc: " + str(exception))
 
@@ -73,9 +74,15 @@ def analyse_doc(id: int, db: Session):
 
 @celery.task
 def image_to_text(path):
-    image = Image.open(path)
-    pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
-    text = pytesseract.image_to_string(image)
+    text = 1
+    try:
+        print(f"DIRECTORY: {listdir(getcwd())}")
+        image = Image.open(path)
+        pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
+        text = pytesseract.image_to_string(image)
+    except FileNotFoundError as e:
+        print(f"ABS: {abspath(getcwd())}")
+    
     return text
 
 
