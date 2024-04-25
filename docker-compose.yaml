@@ -6,9 +6,15 @@ services:
       - "~/Documents:/app/Documents/"
     image: postgres:13
     environment:
+      - PGUSER=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres", "-d", "postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
 
   redis:
     image: redis:6
@@ -27,7 +33,6 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
       - redis
 
   flower:
@@ -46,7 +51,6 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
       - redis
       - celery
 
@@ -65,10 +69,5 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
-      - redis
-      - celery
-      - flower
-
-# volumes:
-#   myvolume:
+      db:
+        condition: service_healthy
