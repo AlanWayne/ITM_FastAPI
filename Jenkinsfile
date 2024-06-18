@@ -24,7 +24,7 @@ pipeline {
 
         stage('Run tests against the container') {
             steps {
-                sh 'curl http://localhost:8000/param?query=demo | jq'
+                sh "curl -X 'GET' 'http://localhost:8000/document/api/' -H 'accept: application/json' | jq"
             }
         }
     }
