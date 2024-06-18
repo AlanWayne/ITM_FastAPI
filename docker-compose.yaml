@@ -59,7 +59,7 @@ services:
     volumes:
       - "~/Documents:/app/Documents/"
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
       - DB_HOST=db
       - DB_PORT=5432
