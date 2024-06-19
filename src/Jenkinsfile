@@ -18,7 +18,7 @@ pipeline {
         stage('Start container') {
             steps {
                 sh 'cd src'
-                sh 'docker-compose up -d -f /src/docker-compose.yaml --no-color --wait'
+                sh 'docker-compose -f /src/docker-compose.yaml up -d --no-color --wait'
                 sh 'docker-compose ps'
             }
         }
@@ -32,7 +32,7 @@ pipeline {
 
     post {
         always {
-            sh 'docker-compose down -f /src/docker-compose.yaml --remove-orphans -v'
+            sh 'docker-compose -f /src/docker-compose.yaml down --remove-orphans -v'
             sh 'docker-compose ps'
         }
     }
