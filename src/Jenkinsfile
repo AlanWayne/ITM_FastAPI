@@ -19,7 +19,7 @@ pipeline {
             steps {
                 sh 'cd src'
                 sh 'docker-compose -f src/docker-compose.yaml up -d --no-color --wait'
-                sh 'docker-compose ps'
+                sh 'docker-compose -f src/docker-compose.yaml ps'
             }
         }
 
@@ -33,7 +33,7 @@ pipeline {
     post {
         always {
             sh 'docker-compose -f src/docker-compose.yaml down --remove-orphans -v'
-            sh 'docker-compose ps'
+            sh 'docker-compose -f src/docker-compose.yaml ps'
         }
     }
 }
