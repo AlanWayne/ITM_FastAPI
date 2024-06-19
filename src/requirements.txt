@@ -9,3 +9,6 @@ Pillow==8.4.0
 pytesseract==0.3.8
 python-multipart==0.0.2
 flower==1.0.
+pytest==8.2.2
+requests
+httpx

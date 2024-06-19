@@ -15,20 +15,27 @@ celery = Celery(
 
 
 def upload_doc(file: UploadFile, db: Session):
-    temp_path = f"/app/Documents/{file.filename}"
-    document = Document(path=temp_path)
+    print(" > file:", file)
 
     try:
-        with open(temp_path, "wb") as f:
-            f.write(file.file.read())
+        temp_path = f"/app/Documents/{file.filename}"
+        document = Document(path=temp_path)
     except Exception as exception:
         print(exception)
         return 1
     else:
-        db.add(document)
-        db.commit()
-        db.refresh(document)
-        return temp_path
+
+        try:
+            with open(temp_path, "wb") as f:
+                f.write(file.file.read())
+        except Exception as exception:
+            print(exception)
+            return 1
+        else:
+            db.add(document)
+            db.commit()
+            db.refresh(document)
+            return temp_path
 
 
 def remove_doc(id: int, db: Session):

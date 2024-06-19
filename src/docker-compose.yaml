@@ -71,3 +71,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  test:
+    build: .
+    volumes:
+      - "~/Documents:/app/Documents/"
+    command: python -m pytest -v .
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - app

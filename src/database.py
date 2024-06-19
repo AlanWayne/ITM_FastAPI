@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 
