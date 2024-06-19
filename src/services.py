@@ -15,8 +15,6 @@ celery = Celery(
 
 
 def upload_doc(file: UploadFile, db: Session):
-    print(" > file:", file)
-
     try:
         temp_path = f"/app/Documents/{file.filename}"
         document = Document(path=temp_path)

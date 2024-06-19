@@ -6,7 +6,7 @@ class Document(Base):
     __tablename__ = "document"
 
     id = Column(Integer, primary_key=True)
-    path = Column(String, unique=True)
+    path = Column(String)
 
 
 class Documents_text(Base):
