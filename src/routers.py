@@ -24,7 +24,3 @@ async def analys(id: int = None, db: Session = Depends(get_db)):
 @router.get("/document/", tags=["document"])
 async def extract(id: int = None, db: Session = Depends(get_db)):
     return services.get_text(id, db)
-
-@router.get("/api/", tags=["healthcheck"])
-async def health_check():
-    return {"status changed": True}
