@@ -55,4 +55,15 @@ def test_extract(client):
 
     assert response.status_code == 200
     assert response.json() == "PURE\nTEXT\n"
-    
+
+
+def test_delete(client):
+    url = "http://0.0.0.0:8000/delete/?id="
+    db = SessionLocal()
+    record = db.query(Document).order_by(Document.id.desc()).first()
+    url += str(record.id)
+
+    response = client.delete(url)
+
+    assert response.status_code == 200
+    assert response.json() == 0
