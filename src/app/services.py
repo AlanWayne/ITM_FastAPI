@@ -1,11 +1,11 @@
-from models import Document, Documents_text
+from app.models import Document, Documents_text
 from sqlalchemy.orm import Session
 from fastapi import UploadFile
 from os import remove
 from celery import Celery
 from PIL import Image
 from pytesseract import pytesseract
-from config import REDIS_HOST, REDIS_PORT
+from app.config import REDIS_HOST, REDIS_PORT
 
 celery = Celery(
     "tasks",

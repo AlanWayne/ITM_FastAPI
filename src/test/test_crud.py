@@ -1,9 +1,9 @@
 from fastapi.testclient import TestClient
 from pytest import fixture
 from main import app
-from routers import *
-from database import SessionLocal
-from models import Document
+from app.routers import *
+from app.database import SessionLocal
+from app.models import Document
 
 
 @fixture(scope="module")
@@ -21,7 +21,7 @@ def test_status(client):
 
 def test_upload(client):
     url = "http://0.0.0.0:8000/upload/"
-    with open("/app/image.png", "rb") as file:
+    with open("/app/test/image.png", "rb") as file:
         response = client.post(
             url,
             files={"data": file, "type": "image/png"},
